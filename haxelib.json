@@ -1,14 +1,10 @@
 {
-	"name": "khakhatmx2d",
-	"url" : "https://github.com/varomix/khatmx",
+	"name": "khatmx",
+	"url" : "https://github.com/lewislepton/khatmx",
 	"license": "MIT",
-	"tags": ["tmx", "tiled", "game"],
-	"description": "Kha Library to load Tiled tmx maps",
-	"version": "0.1.1",
-	"releasenote": "Revision some number.",
-	"contributors": ["varomix"],
-	"dependencies": {
-		"kha": ""
-	},
+	"tags": ["tmx", "tiled", "map"],
+	"description": "Load Tiled TMX maps with Kha",
+	"version": "0.0.1",
+	"contributors": ["lewislepton", "varomix"],
 	"classPath": "Sources"
 }
