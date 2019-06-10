@@ -25,11 +25,9 @@ import haxe.io.Path;
 import kha.Image;
 
 class Helper {
-
 	private static var assetLoader:AssetLoader;
 
-	private function new() {
-	}
+	private function new() {}
 
 	/** This method checks if the given Xml element is really a Xml element! */
 	public static function isValidElement(element:Xml):Bool {
@@ -57,7 +55,7 @@ class Helper {
 	/** This methods is wrapper for Assets.getBitmapData(string), if
 		you're using another Asset managment system simply override this method */
 	public static function getImage(assetPath:String):Image {
-		if(assetLoader == null) {
+		if (assetLoader == null) {
 			assetLoader = new DefaultAssetLoader();
 		}
 
@@ -65,16 +63,17 @@ class Helper {
 	}
 
 	public static function joinPath(path1:String, path2:String):String {
-		if(path1 == null) {
+		if (path1 == null) {
 			path1 = "";
 		}
 
-		if(path2 == null) {
+		if (path2 == null) {
 			path2 = "";
 		}
-		
+
 		var normalized = Path.normalize(path1 + path2);
-		if (normalized.substr(0, 1) == "/") normalized = normalized.substr(1);
+		if (normalized.substr(0, 1) == "/")
+			normalized = normalized.substr(1);
 		return normalized;
 	}
 }

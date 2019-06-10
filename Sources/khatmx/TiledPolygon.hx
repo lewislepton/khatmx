@@ -24,7 +24,6 @@ package khatmx;
 import kha.math.Vector2;
 
 class TiledPolygon {
-
 	public var origin(default, null):Vector2;
 	public var points(default, null):Array<Vector2>;
 
@@ -32,5 +31,4 @@ class TiledPolygon {
 		this.origin = origin;
 		this.points = points;
 	}
-
 }

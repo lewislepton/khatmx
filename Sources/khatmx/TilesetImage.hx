@@ -24,7 +24,6 @@ package khatmx;
 import kha.Image;
 
 class TilesetImage {
-
 	/** The filepath where this image is */
 	public var source(default, null):String;
 
@@ -32,10 +31,10 @@ class TilesetImage {
 	public var fileName(default, null):String;
 
 	/** The width of this image */
-	public var width(get_width, null):Int;
+	public var width(get, null):Int;
 
 	/** The height of this image */
-	public var height(get_height, null):Int;
+	public var height(get, null):Int;
 
 	/** The image as BitmapData */
 	public var texture(default, null):Image;
@@ -49,7 +48,7 @@ class TilesetImage {
 		var threshold:UInt = -1;
 		var transparent:UInt = 0x00000000;
 
-		if(trans != null) {
+		if (trans != null) {
 			useTransparentColor = true;
 
 			// insert hex prefix and 255 alpha
@@ -77,5 +76,4 @@ class TilesetImage {
 	private function get_height():Int {
 		return this.texture.height;
 	}
-
 }

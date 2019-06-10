@@ -22,7 +22,6 @@
 package khatmx;
 
 class TiledObjectGroup {
-
 	/** The name of this ObjectGroup */
 	public var name(default, null):String;
 
@@ -43,9 +42,7 @@ class TiledObjectGroup {
 
 	private var objectCounter:Int;
 
-	private function new(name:String, color:String, width:Int, height:Int, properties:Map<String, String>,
-			xmlObjects:Array<Xml>) {
-
+	private function new(name:String, color:String, width:Int, height:Int, properties:Map<String, String>, xmlObjects:Array<Xml>) {
 		this.name = name;
 		this.color = color;
 		this.width = width;
@@ -54,7 +51,7 @@ class TiledObjectGroup {
 
 		this.objects = new Array<TiledObject>();
 
-		for(xml in xmlObjects) {
+		for (xml in xmlObjects) {
 			this.objects.push(TiledObject.fromGenericXml(xml, this));
 		}
 
@@ -71,25 +68,24 @@ class TiledObjectGroup {
 		var objects:Array<Xml> = new Array<Xml>();
 
 		for (child in xml.elements()) {
-				if (child.nodeName == "properties") {
-					for (property in child) {
-						if (property.exists("name")) {
-							properties.set(property.get("name"), property.get("value"));
-						}
+			if (child.nodeName == "properties") {
+				for (property in child) {
+					if (property.exists("name")) {
+						properties.set(property.get("name"), property.get("value"));
 					}
 				}
+			}
 
-				if (child.nodeName == "object") {
-					objects.push(child);
-				}
-			
+			if (child.nodeName == "object") {
+				objects.push(child);
+			}
 		}
 
 		return new TiledObjectGroup(name, color, width, height, properties, objects);
 	}
 
 	public function hasNext():Bool {
-		if(objectCounter < objects.length) {
+		if (objectCounter < objects.length) {
 			return true;
 		} else {
 			objectCounter = 0;
@@ -100,5 +96,4 @@ class TiledObjectGroup {
 	public function next():TiledObject {
 		return objects[objectCounter++];
 	}
-
 }

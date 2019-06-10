@@ -24,7 +24,6 @@ package khatmx;
 import kha.math.Vector2;
 
 class TiledPolyline {
-
 	public var origin(default, null):Vector2;
 	public var points(default, null):Array<Vector2>;
 
@@ -32,5 +31,4 @@ class TiledPolyline {
 		this.origin = origin;
 		this.points = points;
 	}
-
 }

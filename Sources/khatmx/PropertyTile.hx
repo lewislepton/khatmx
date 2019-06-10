@@ -22,7 +22,6 @@
 package khatmx;
 
 class PropertyTile {
-
 	public var id(default, null):Int;
 	public var properties(default, null):Map<String, String>;
 
@@ -30,5 +29,4 @@ class PropertyTile {
 		this.id = id;
 		this.properties = properties;
 	}
-
 }

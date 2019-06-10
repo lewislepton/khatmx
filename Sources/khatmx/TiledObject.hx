@@ -24,7 +24,6 @@ package khatmx;
 import kha.math.Vector2;
 
 class TiledObject {
-
 	/** The objectgroup this object belongs to */
 	public var parent(default, null):TiledObjectGroup;
 
@@ -50,10 +49,10 @@ class TiledObject {
 	public var height(default, null):Int;
 
 	/** Checks if this object has a polygons */
-	public var hasPolygon(get_hasPolygon, null):Bool;
+	public var hasPolygon(get, null):Bool;
 
 	/** Check if this object has a polylines */
-	public var hasPolyline(get_hasPolyline, null):Bool;
+	public var hasPolyline(get, null):Bool;
 
 	/** The polygon of this object. Default: null */
 	public var polygon(default, null):TiledPolygon;
@@ -64,9 +63,8 @@ class TiledObject {
 	/** Contains all properties from this object */
 	public var properties(default, null):Map<String, String>;
 
-	private function new(parent:TiledObjectGroup, gid:Int, name:String, type:String, x:Int, y:Int,
-			width:Int, height:Int, polygon:TiledPolygon, polyline:TiledPolyline,
-			properties:Map<String, String>) {
+	private function new(parent:TiledObjectGroup, gid:Int, name:String, type:String, x:Int, y:Int, width:Int, height:Int, polygon:TiledPolygon,
+			polyline:TiledPolyline, properties:Map<String, String>) {
 		this.parent = parent;
 		this.gid = gid;
 		this.name = name;
@@ -94,10 +92,10 @@ class TiledObject {
 		var properties:Map<String, String> = new Map<String, String>();
 
 		for (child in xml) {
-			if(Helper.isValidElement(child)) {
+			if (Helper.isValidElement(child)) {
 				if (child.nodeName == "properties") {
 					for (property in child) {
-						if(Helper.isValidElement(property)) {
+						if (Helper.isValidElement(property)) {
 							properties.set(property.get("name"), property.get("value"));
 						}
 					}
@@ -111,22 +109,21 @@ class TiledObject {
 
 					var pointsAsStringArray:Array<String> = pointsAsString.split(" ");
 
-					for(p in pointsAsStringArray) {
+					for (p in pointsAsStringArray) {
 						var coords:Array<String> = p.split(",");
 						points.push(new Vector2(Std.parseInt(coords[0]), Std.parseInt(coords[1])));
 					}
 
-					if(child.nodeName == "polygon") {
+					if (child.nodeName == "polygon") {
 						polygon = new TiledPolygon(origin, points);
-					} else if(child.nodeName == "polyline") {
+					} else if (child.nodeName == "polyline") {
 						polyline = new TiledPolyline(origin, points);
 					}
 				}
 			}
 		}
 
-		return new TiledObject(parent, gid, name, type, x, y, width,
-			height, polygon, polyline, properties);
+		return new TiledObject(parent, gid, name, type, x, y, width, height, polygon, polyline, properties);
 	}
 
 	private function get_hasPolygon():Bool {
@@ -136,5 +133,4 @@ class TiledObject {
 	private function get_hasPolyline():Bool {
 		return this.polyline != null;
 	}
-
 }

@@ -22,7 +22,6 @@
 package khatmx;
 
 class TerrainType {
-
 	public var name(default, null):String;
 	public var tileId(default, null):Int;
 

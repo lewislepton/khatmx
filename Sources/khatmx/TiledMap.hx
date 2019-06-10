@@ -1,7 +1,7 @@
 package khatmx;
 
-import haxe.xml.Fast;
-import kha.Framebuffer;
+import haxe.xml.Access;
+import kha.Canvas;
 import kha.graphics2.Graphics;
 import khatmx.display.KhaRenderer;
 import khatmx.display.Renderer;
@@ -12,12 +12,10 @@ import kha.Color;
  * @author Christopher Kaster
  */
 class TiledMap {
-
-	public var camx(default, set): Int;
-	public var camy(default, set): Int;
-	public var screenOffsetX: Int;
-	public var screenOffsetY: Int;
-
+	public var camx(default, set):Int;
+	public var camy(default, set):Int;
+	public var screenOffsetX:Int;
+	public var screenOffsetY:Int;
 	public var version:String;
 	public var bgColor:Color;
 	public var fullWidth:Int;
@@ -33,10 +31,10 @@ class TiledMap {
 	public var heightInTiles(default, null):Int;
 
 	/** The map width in pixels */
-	public var totalWidth(get_totalWidth, null):Int;
+	public var totalWidth(get, null):Int;
 
 	/** The map height in pixels */
-	public var totalHeight(get_totalHeight, null):Int;
+	public var totalHeight(get, null):Int;
 
 	/** TILED orientation: Orthogonal or Isometric */
 	public var orientation(default, null):TiledMapOrientation;
@@ -66,7 +64,6 @@ class TiledMap {
 	public var properties(default, null):Map<String, String>;
 
 	public var backgroundColorSet(default, null):Bool = false;
-
 	public var renderer(default, null):Renderer;
 
 	public function new(path:String, renderer:Renderer) {
@@ -76,11 +73,11 @@ class TiledMap {
 
 		// parseXML(xml);
 
-		var source:Fast = null;
-		var node:Fast = null;
+		var source:Access = null;
+		var node:Access = null;
 
 		// string data
-		source = new Fast(Xml.parse(xml));
+		source = new Access(Xml.parse(xml));
 		source = source.node.map;
 
 		// init arrays
@@ -89,7 +86,6 @@ class TiledMap {
 		this.tilesets = new Array<Tileset>();
 		this.objectGroups = new Array<TiledObjectGroup>();
 		this.layers = new Array<Layer>();
-
 
 		// load tmx stuff in chunks
 		loadAttributes(source);
@@ -100,27 +96,25 @@ class TiledMap {
 		// TODO : // use this to export to kha2D tilemap
 		// trace(this.layers[1].tiles[1].gid);
 
-		//set camera to 0
+		// set camera to 0
 		camx = 0;
 		camy = 0;
-
 
 		this.renderer = renderer;
 
 		renderer.setTiledMap(this);
 	}
 
-	public function loadAttributes(source:Fast):Void
-	{
+	public function loadAttributes(source:Access):Void {
 		widthInTiles = Std.parseInt(source.att.width);
 		heightInTiles = Std.parseInt(source.att.height);
 
-	 	version = (source.att.version != null) ? source.att.version : "unknown";
+		version = (source.att.version != null) ? source.att.version : "unknown";
 		orientation = (source.att.orientation != null) ? TiledMapOrientation.Orthogonal : TiledMapOrientation.Isometric;
 		bgColor = (source.has.backgroundcolor && source.att.backgroundcolor != null) ? Color.fromString(source.att.backgroundcolor) : Color.fromValue(0x000000);
 		tileWidth = Std.parseInt(source.att.tilewidth);
 		tileHeight = Std.parseInt(source.att.tileheight);
-		
+
 		totalWidth = Std.parseInt(source.att.width);
 		totalHeight = Std.parseInt(source.att.height);
 		// // Calculate the entire size
@@ -128,26 +122,19 @@ class TiledMap {
 		fullHeight = heightInTiles * tileHeight;
 	}
 
-	private function loadProperties(source:Fast):Void
-	{
-		for(child in source.elements)
-		{
-			if(child.name == "layer")
-			{
-				if(child.hasNode.properties)
+	private function loadProperties(source:Access):Void {
+		for (child in source.elements) {
+			if (child.name == "layer") {
+				if (child.hasNode.properties)
 					properties.set(child.node.properties.node.property.att.name, child.node.properties.node.property.att.value);
 			}
 		}
 	}
 
-	private function loadTilesets(source:Fast):Void
-	{
-		
-		for(child in source.elements)
-		{
+	private function loadTilesets(source:Access):Void {
+		for (child in source.elements) {
 			var tileset:Tileset = null;
-			if (child.name == "tileset")
-			{
+			if (child.name == "tileset") {
 				// trace(child.x.toString()); // get XML from FAST
 				tileset = Tileset.fromGenericXml(this, child.x.toString());
 				tileset.setFirstGID(Std.parseInt(child.att.firstgid));
@@ -156,29 +143,24 @@ class TiledMap {
 			}
 		}
 	}
-	
-	public function loadLayers(source:Fast):Void
-	{
+
+	public function loadLayers(source:Access):Void {
 		// LAYERS
-		for(child in source.elements)
-		{
-			if (child.name == "layer")
-			{	
+		for (child in source.elements) {
+			if (child.name == "layer") {
 				var layer:Layer = Layer.fromGenericXml(child.x, this);
 				this.layers.push(layer);
 			}
 
 			// OBJECT GROUPS
-			if (child.name == "objectgroup")
-			{
+			if (child.name == "objectgroup") {
 				var objectGroup = TiledObjectGroup.fromGenericXml(child.x);
 
 				this.objectGroups.push(objectGroup);
 			}
 
 			// IMAGE LAYERS
-			if (child.name == "imagelayer")
-			{
+			if (child.name == "imagelayer") {
 				var imageLayer = ImageLayer.fromGenericXml(this, child.x);
 
 				this.imageLayers.push(imageLayer);
@@ -186,17 +168,16 @@ class TiledMap {
 		}
 	}
 
-	public function render(framebuffer:Framebuffer) {
-		// renderer.clear(framebuffer);
-					
-		for(imageLayer in this.imageLayers) {
-			renderer.drawImageLayer(framebuffer, imageLayer);
+	public function render(canvas:Canvas) {
+		// renderer.clear(canvas);
+
+		for (imageLayer in this.imageLayers) {
+			renderer.drawImageLayer(canvas, imageLayer);
 		}
 
-		for(layer in this.layers) {
-			renderer.drawLayer(framebuffer, layer);
+		for (layer in this.layers) {
+			renderer.drawLayer(canvas, layer);
 		}
-
 	}
 
 	/**
@@ -226,8 +207,7 @@ class TiledMap {
 
 		this.widthInTiles = Std.parseInt(xml.get("width"));
 		this.heightInTiles = Std.parseInt(xml.get("height"));
-		this.orientation = xml.get("orientation") == "orthogonal" ?
-			TiledMapOrientation.Orthogonal : TiledMapOrientation.Isometric;
+		this.orientation = xml.get("orientation") == "orthogonal" ? TiledMapOrientation.Orthogonal : TiledMapOrientation.Isometric;
 		this.tileWidth = Std.parseInt(xml.get("tilewidth"));
 		this.tileHeight = Std.parseInt(xml.get("tileheight"));
 		this.tilesets = new Array<Tileset>();
@@ -240,7 +220,7 @@ class TiledMap {
 		var backgroundColor:String = xml.get("backgroundcolor");
 
 		// if the element isn't set choose white
-		if(backgroundColor != null) {
+		if (backgroundColor != null) {
 			this.backgroundColorSet = true;
 
 			// replace # with 0xff to match ARGB
@@ -251,45 +231,40 @@ class TiledMap {
 			this.backgroundColor = 0x00000000;
 		}
 
-
-
-
 		for (child in xml.elements()) {
 			// if(Helper.isValidElement(child)) {
-				if (child.nodeName == "tileset") {
-					var tileset:Tileset = null;
-					if (child.get("source") != null) {
-						tileset = Tileset.fromGenericXml(this, Helper.getText(child.get("source")));
-					} else {
-						tileset = Tileset.fromGenericXml(this, child.toString());
-					}
-
-					tileset.setFirstGID(Std.parseInt(child.get("firstgid")));
-
-					this.tilesets.push(tileset);
-				} else if (child.nodeName == "properties") {
-					for (property in child) {
-						if (!Helper.isValidElement(property))
-							continue;
-						properties.set(property.get("name"), property.get("value"));
-					}
-				} else if (child.nodeName == "layer") {
-					var layer:Layer = Layer.fromGenericXml(child, this);
-
-					this.layers.push(layer);
-				} else if (child.nodeName == "objectgroup") {
-					var objectGroup = TiledObjectGroup.fromGenericXml(child);
-
-					this.objectGroups.push(objectGroup);
-				} else if (child.nodeName == "imagelayer") {
-					var imageLayer = ImageLayer.fromGenericXml(this, child);
-
-					this.imageLayers.push(imageLayer);
+			if (child.nodeName == "tileset") {
+				var tileset:Tileset = null;
+				if (child.get("source") != null) {
+					tileset = Tileset.fromGenericXml(this, Helper.getText(child.get("source")));
+				} else {
+					tileset = Tileset.fromGenericXml(this, child.toString());
 				}
+
+				tileset.setFirstGID(Std.parseInt(child.get("firstgid")));
+
+				this.tilesets.push(tileset);
+			} else if (child.nodeName == "properties") {
+				for (property in child) {
+					if (!Helper.isValidElement(property))
+						continue;
+					properties.set(property.get("name"), property.get("value"));
+				}
+			} else if (child.nodeName == "layer") {
+				var layer:Layer = Layer.fromGenericXml(child, this);
+
+				this.layers.push(layer);
+			} else if (child.nodeName == "objectgroup") {
+				var objectGroup = TiledObjectGroup.fromGenericXml(child);
+
+				this.objectGroups.push(objectGroup);
+			} else if (child.nodeName == "imagelayer") {
+				var imageLayer = ImageLayer.fromGenericXml(this, child);
+
+				this.imageLayers.push(imageLayer);
+			}
 			// }
-
 		}
-
 	}
 
 	/**
@@ -299,10 +274,9 @@ class TiledMap {
 	public function getTilesetByGID(gid:Int):Tileset {
 		var tileset:Tileset = null;
 
-		for(t in this.tilesets) {
-			if(gid >= t.firstGID) {
+		for (t in this.tilesets) {
+			if (gid >= t.firstGID) {
 				tileset = t;
-
 			}
 		}
 
@@ -310,10 +284,10 @@ class TiledMap {
 	}
 
 	/**
-	* Set the camera X position
-	* @return camerax position
-	*/
-	function set_camx(newcamx: Int): Int {
+	 * Set the camera X position
+	 * @return camerax position
+	 */
+	function set_camx(newcamx:Int):Int {
 		camx = newcamx;
 		// trace("collisionLayer", collisionLayer);
 		// if (collisionLayer != null) {
@@ -325,10 +299,10 @@ class TiledMap {
 	}
 
 	/**
-	* Set the camera Y position
-	* @return cameray position
-	*/
-	function set_camy(newcamy: Int): Int {
+	 * Set the camera Y position
+	 * @return cameray position
+	 */
+	function set_camy(newcamy:Int):Int {
 		camy = newcamy;
 		// trace("collisionLayer", collisionLayer);
 		// if (collisionLayer != null) {
@@ -363,8 +337,8 @@ class TiledMap {
 	 * @return The searched layer, null if there is no such layer.
 	 */
 	public function getLayerByName(name:String):Layer {
-		for(layer in this.layers) {
-			if(layer.name == name) {
+		for (layer in this.layers) {
+			if (layer.name == name) {
 				return layer;
 			}
 		}
@@ -378,8 +352,8 @@ class TiledMap {
 	 * @return The searched object group, null if there is no such object group.
 	 */
 	public function getObjectGroupByName(name:String):TiledObjectGroup {
-		for(objectGroup in this.objectGroups) {
-			if(objectGroup.name == name) {
+		for (objectGroup in this.objectGroups) {
+			if (objectGroup.name == name) {
 				return objectGroup;
 			}
 		}
@@ -387,15 +361,15 @@ class TiledMap {
 		return null;
 	}
 
-	 /**
-	  * Returns an object in a given object group
-	  * @param name The name of the object
-	  * @param inObjectGroup The object group which contains this object.
-	  * @return An TiledObject, null if there is no such object.
-	  */
+	/**
+	 * Returns an object in a given object group
+	 * @param name The name of the object
+	 * @param inObjectGroup The object group which contains this object.
+	 * @return An TiledObject, null if there is no such object.
+	 */
 	public function getObjectByName(name:String, inObjectGroup:TiledObjectGroup):TiledObject {
-		for(object in inObjectGroup) {
-			if(object.name == name) {
+		for (object in inObjectGroup) {
+			if (object.name == name) {
 				return object;
 			}
 		}

@@ -26,7 +26,6 @@
 package khatmx;
 
 class Layer {
-
 	/** The name of this layer */
 	public var name(default, null):String;
 
@@ -50,10 +49,8 @@ class Layer {
 
 	/** get the tileGIDs **/
 	// public var tileGIDs(default, null):Array<Int>;
-	
 
-	private function new(parent:TiledMap, name:String, width:Int, height:Int,
-			opacity:Float, visible:Bool, tiles:Array<Int>) {
+	private function new(parent:TiledMap, name:String, width:Int, height:Int, opacity:Float, visible:Bool, tiles:Array<Int>) {
 		this.parent = parent;
 		this.name = name;
 		this.width = width;
@@ -62,7 +59,7 @@ class Layer {
 		this.visible = visible;
 
 		this.tiles = new Array<Tile>();
-		for(gid in tiles) {
+		for (gid in tiles) {
 			this.tiles.push(Tile.fromGID(gid, this));
 		}
 	}
@@ -77,35 +74,31 @@ class Layer {
 		var name:String = xml.get("name");
 		var width:Int = Std.parseInt(xml.get("width"));
 		var height:Int = Std.parseInt(xml.get("height"));
-		var opacity:Float = Std.parseFloat(xml.get("opacity") != null ?
-			xml.get("opacity") : "1.0");
-		var visible:Bool = xml.get("visible") == null ?
-			true : Std.parseInt(xml.get("visible")) == 1 ?
-				true : false;
+		var opacity:Float = Std.parseFloat(xml.get("opacity") != null ? xml.get("opacity") : "1.0");
+		var visible:Bool = xml.get("visible") == null ? true : Std.parseInt(xml.get("visible")) == 1 ? true : false;
 
 		var tileGIDs = new Array<Int>();
 
 		for (child in xml.elements()) {
-
 			if (child.nodeName == "data") {
 				var encoding:String = "";
-				if (child.exists("encoding")){
+				if (child.exists("encoding")) {
 					encoding = child.get("encoding");
 				}
 				var chunk:String = "";
-				switch(encoding){
+				switch (encoding) {
 					case "base64":
 						/*chunk = child.firstChild().nodeValue;
-						var compressed:Bool = false;
-						if (child.exists("compression")){
-							switch(child.get("compression")){
-								case "zlib":
-									compressed = true;
-								default:
-									throw "TiledMap: data compression type not supported!";
+							var compressed:Bool = false;
+							if (child.exists("compression")){
+								switch(child.get("compression")){
+									case "zlib":
+										compressed = true;
+									default:
+										throw "TiledMap: data compression type not supported!";
+								}
 							}
-						}
-						tileGIDs = base64ToArray(chunk, width, compressed);*/
+							tileGIDs = base64ToArray(chunk, width, compressed); */
 						throw "kha-tiled: base64 not supported at the moment";
 					case "csv":
 						chunk = child.firstChild().nodeValue;
@@ -128,17 +121,17 @@ class Layer {
 	 * @return A string which contains CSV
 	 */
 	public function toCSV(?width:Int):String {
-		if(width <= 0 || width == null) {
+		if (width <= 0 || width == null) {
 			width = this.width;
 		}
 
 		var counter:Int = 0;
 		var csv:String = "";
 
-		for(tile in this.tiles) {
+		for (tile in this.tiles) {
 			var tileGID = tile.gid;
 
-			if(counter >= width) {
+			if (counter >= width) {
 				// remove the last ","
 				csv = csv.substr(0, csv.length - 1);
 
@@ -165,7 +158,6 @@ class Layer {
 		var row:String;
 
 		for (row in rows) {
-
 			if (row == "") {
 				continue;
 			}
@@ -175,75 +167,71 @@ class Layer {
 			var entry:String;
 
 			for (entry in entries) {
-
-				if(entry != "") {
+				if (entry != "") {
 					result.push(Std.parseInt(entry));
 				}
 			}
 		}
 		return result;
 	}
-
-
-
 	/*private static function base64ToArray(chunk:String, lineWidth:Int, compressed:Bool):Array<Int>{
-		var result:Array<Int> = new Array<Int>();
-		var data:ByteArray = base64ToByteArray(chunk);
+			var result:Array<Int> = new Array<Int>();
+			var data:ByteArray = base64ToByteArray(chunk);
 
-		if(compressed)
-			#if js
-				throw "No support for compressed maps in html5 target!";
-			#end
-			#if !js
-				data.uncompress();
-			#end
-		data.endian = Endian.LITTLE_ENDIAN;
+			if(compressed)
+				#if js
+					throw "No support for compressed maps in html5 target!";
+				#end
+				#if !js
+					data.uncompress();
+				#end
+			data.endian = Endian.LITTLE_ENDIAN;
 
-		while(data.position < data.length){
-			result.push(data.readInt());
-		}
-		return result;
-	}
-
-	private static inline var BASE64_CHARS:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-
-	private static function base64ToByteArray(data:String):ByteArray{
-		var output:ByteArray = new ByteArray();
-
-		//initialize lookup table
-		var lookup:Array<Int> = new Array<Int>();
-		var c:Int;
-		for (c in 0...BASE64_CHARS.length){
-			lookup[BASE64_CHARS.charCodeAt(c)] = c;
+			while(data.position < data.length){
+				result.push(data.readInt());
+			}
+			return result;
 		}
 
-		var i:Int = 0;
+		private static inline var BASE64_CHARS:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
-		while (i < data.length - 3) {
-			// Ignore whitespace
-			if (data.charAt(i) == " " || data.charAt(i) == "\n"){
-				i++; continue;
+		private static function base64ToByteArray(data:String):ByteArray{
+			var output:ByteArray = new ByteArray();
+
+			//initialize lookup table
+			var lookup:Array<Int> = new Array<Int>();
+			var c:Int;
+			for (c in 0...BASE64_CHARS.length){
+				lookup[BASE64_CHARS.charCodeAt(c)] = c;
 			}
 
-			//read 4 bytes and look them up in the table
-			var a0:Int = lookup[data.charCodeAt(i)];
-			var a1:Int = lookup[data.charCodeAt(i + 1)];
-			var a2:Int = lookup[data.charCodeAt(i + 2)];
-			var a3:Int = lookup[data.charCodeAt(i + 3)];
+			var i:Int = 0;
 
-			// convert to and write 3 bytes
-			if(a1 < 64)
-				output.writeByte((a0 << 2) + ((a1 & 0x30) >> 4));
-			if(a2 < 64)
-				output.writeByte(((a1 & 0x0f) << 4) + ((a2 & 0x3c) >> 2));
-			if(a3 < 64)
-				output.writeByte(((a2 & 0x03) << 6) + a3);
+			while (i < data.length - 3) {
+				// Ignore whitespace
+				if (data.charAt(i) == " " || data.charAt(i) == "\n"){
+					i++; continue;
+				}
 
-			i += 4;
-		}
+				//read 4 bytes and look them up in the table
+				var a0:Int = lookup[data.charCodeAt(i)];
+				var a1:Int = lookup[data.charCodeAt(i + 1)];
+				var a2:Int = lookup[data.charCodeAt(i + 2)];
+				var a3:Int = lookup[data.charCodeAt(i + 3)];
 
-		// Rewind & return decoded data
-		output.position = 0;
-		return output;
+				// convert to and write 3 bytes
+				if(a1 < 64)
+					output.writeByte((a0 << 2) + ((a1 & 0x30) >> 4));
+				if(a2 < 64)
+					output.writeByte(((a1 & 0x0f) << 4) + ((a2 & 0x3c) >> 2));
+				if(a3 < 64)
+					output.writeByte(((a2 & 0x03) << 6) + a3);
+
+				i += 4;
+			}
+
+			// Rewind & return decoded data
+			output.position = 0;
+			return output;
 	}*/
 }

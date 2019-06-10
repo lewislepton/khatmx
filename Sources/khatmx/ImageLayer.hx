@@ -24,17 +24,14 @@ package khatmx;
 import haxe.io.Path;
 
 class ImageLayer {
-
 	public var tiledMap(default, null):TiledMap;
 	public var name(default, null):String;
 	public var opacity(default, null):Float;
 	public var visible(default, null):Bool;
-
 	public var properties(default, null):Map<String, String>;
 	public var image(default, null):TilesetImage;
 
-	private function new(tiledMap:TiledMap, name:String, opacity:Float, visible:Bool, properties:Map<String, String>,
-			image:TilesetImage) {
+	private function new(tiledMap:TiledMap, name:String, opacity:Float, visible:Bool, properties:Map<String, String>, image:TilesetImage) {
 		this.tiledMap = tiledMap;
 		this.name = name;
 		this.opacity = opacity;
@@ -51,9 +48,9 @@ class ImageLayer {
 		var properties = new Map<String, String>();
 		var image:TilesetImage = null;
 
-		for(child in xml.elements()) {
-			if(child.nodeName == "properties") {
-				for(property in child) {
+		for (child in xml.elements()) {
+			if (child.nodeName == "properties") {
+				for (property in child) {
 					properties.set(property.get("name"), property.get("value"));
 				}
 			}

@@ -29,10 +29,8 @@ import kha.Assets;
  * ...
  * @author Christopher Kaster
  */
-class DefaultAssetLoader implements AssetLoader{
-
-	public function new() {
-	}
+class DefaultAssetLoader implements AssetLoader {
+	public function new() {}
 
 	/** Default Kha way to load text */
 	public function getText(assetPath:String):String {
@@ -40,9 +38,8 @@ class DefaultAssetLoader implements AssetLoader{
 	}
 
 	/** Default Kha way to load images */
-	public function getImage(image:String) : Image {
+	public function getImage(image:String):Image {
 		image = image.split(".")[0]; // strip extension
 		return Reflect.field(Assets.images, image);
 	}
-
 }
